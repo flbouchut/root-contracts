@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+// TODO fix liscenses
 pragma solidity ^0.8.10;
 
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
@@ -6,13 +7,14 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
 
 /**
- * @title ERC1155Tradable
- * ERC1155Tradable - ERC1155 contract that whitelists an operator address, has create and mint functionality, and supports useful standards from OpenZeppelin,
+ * @title AesyERC1155V1
+ * AesyERC1155V1 - ERC1155 contract that, has create and mint functionality, and supports useful standards from OpenZeppelin,
   like _exists(), name(), symbol(), and totalSupply()
  */
-contract ERC1155Tradable is ERC1155, Ownable {
+contract AesyERC1155V1 is ERC1155, Ownable {
   using Strings for string;
 
+  int256 constant public version = 1;
   uint256 private _currentTokenID = 0;
   mapping (uint256 => address) public creators;
   mapping (uint256 => uint256) public tokenSupply;
@@ -27,7 +29,7 @@ contract ERC1155Tradable is ERC1155, Ownable {
    * @dev Require msg.sender to be the creator of the token id
    */
   modifier creatorOnly(uint256 _id) {
-    require(creators[_id] == msg.sender, "ERC1155Tradable#creatorOnly: ONLY_CREATOR_ALLOWED");
+    require(creators[_id] == msg.sender, "AesyERC1155V1#creatorOnly: ONLY_CREATOR_ALLOWED");
     _;
   }
 
@@ -35,7 +37,7 @@ contract ERC1155Tradable is ERC1155, Ownable {
    * @dev Require msg.sender to own more than 0 of the token id
    */
   modifier ownersOnly(uint256 _id) {
-    require(balanceOf(msg.sender, _id) > 0, "ERC1155Tradable#ownersOnly: ONLY_OWNERS_ALLOWED");
+    require(balanceOf(msg.sender, _id) > 0, "AesyERC1155V1#ownersOnly: ONLY_OWNERS_ALLOWED");
     _;
   }
 
@@ -52,12 +54,12 @@ contract ERC1155Tradable is ERC1155, Ownable {
     _id: Token ID
     return: The token URI for the token
    */
-  function tokenUri(
+  function uri(
     uint256 _id
-  ) public view returns (string memory) {
-    require(_exists(_id), "ERC721Tradable#uri: NONEXISTENT_TOKEN");
+  ) public override view returns (string memory) {
+    require(_exists(_id), "AesyERC1155V1#uri: NONEXISTENT_TOKEN");
     return strConcat(
-      uri(_id),
+      super.uri(_id),
       tokenUriById[_id]
     );
   }
@@ -134,7 +136,7 @@ contract ERC1155Tradable is ERC1155, Ownable {
   ) public {
     for (uint256 i = 0; i < _ids.length; i++) {
       uint256 _id = _ids[i];
-      require(creators[_id] == msg.sender, "ERC1155Tradable#batchMint: ONLY_CREATOR_ALLOWED");
+      require(creators[_id] == msg.sender, "AesyERC1155V1#batchMint: ONLY_CREATOR_ALLOWED");
       uint256 quantity = _quantities[i];
       tokenSupply[_id] = tokenSupply[_id] + quantity;
     }
@@ -150,7 +152,7 @@ contract ERC1155Tradable is ERC1155, Ownable {
     address _to,
     uint256[] memory _ids
   ) public {
-    require(_to != address(0), "ERC1155Tradable#setCreator: INVALID_ADDRESS.");
+    require(_to != address(0), "AesyERC1155V1#setCreator: INVALID_ADDRESS.");
     for (uint256 i = 0; i < _ids.length; i++) {
       uint256 id = _ids[i];
       _setCreator(_to, id);
@@ -159,7 +161,8 @@ contract ERC1155Tradable is ERC1155, Ownable {
 
   function _setBaseMetadataURI(
     uint256 _id,
-    string memory _uri) internal creatorOnly(_id) {
+    string memory _uri
+  ) internal creatorOnly(_id) {
     _setURI(_uri);
   }
 
@@ -203,13 +206,13 @@ contract ERC1155Tradable is ERC1155, Ownable {
     string memory _a, 
     string memory _b
   ) private pure returns (string memory) {
-    bytes memory _ba = bytes(_a);
-    bytes memory _bb = bytes(_b);
-    string memory ab = new string(_ba.length + _bb.length);
-    bytes memory babcde = bytes(ab);
-    uint k = 0;
-    for (uint i = 0; i < _ba.length; i++) babcde[k++] = _ba[i];
-    for (uint i = 0; i < _bb.length; i++) babcde[k++] = _bb[i];
-    return string(babcde);
+      bytes memory _ba = bytes(_a);
+      bytes memory _bb = bytes(_b);
+      string memory ab = new string(_ba.length + _bb.length);
+      bytes memory babcde = bytes(ab);
+      uint k = 0;
+      for (uint i = 0; i < _ba.length; i++) babcde[k++] = _ba[i];
+      for (uint i = 0; i < _bb.length; i++) babcde[k++] = _bb[i];
+      return string(babcde);
   }
 }

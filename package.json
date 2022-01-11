@@ -12,7 +12,6 @@
   "author": "vizsatiz",
   "license": "ISC",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.4.1",
-    "multi-token-standard": "^2.2.2"
+    "@openzeppelin/contracts": "^4.4.1"
   }
 }
