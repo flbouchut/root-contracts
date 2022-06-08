@@ -24,7 +24,7 @@ Hardhat will autogenerate random accounts for you if no account is given
 
 3. Run a local blockchain to deploy contracts: `npx hardhat node`
 
-4. Deploy contract using the deploy script in "scripts" folder `npx hardhat run scripts/deploy_root.js`
+4. Deploy contract using the deploy script in "scripts" folder `npx hardhat run --network localhost scripts/deploy_root.js`
 
 or
 
@@ -32,6 +32,12 @@ or
 `npx hardhat run scripts/deploy_root.js --network rinkeby`
 
 5. Interact with deployed contract
-`npx hardhat console`
+`npx hardhat console --network localhost`
 or
 `npx hardhat console --network rinkeby`
+
+### Useful commands to interact with contract in console
+List all accounts used in the network - `await ethers.provider.listAccounts()`
+`contract = await ethers.getContractFactory(<Name of the contract>)`
+`contractInstance = await contract.attach(<Contract Address>)`
+`await contractInstance.method()`
