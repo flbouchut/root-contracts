@@ -19,7 +19,7 @@ module.exports = {
     rinkeby :{
       url : "https://eth-rinkeby.alchemyapi.io/v2/L5tMrf49vewB6qo0bb4tGwyvngJME3-5",
       accounts:{
-        mnemonic: myphrase
+        mnemonic: process.env.MNEMONIC_DEV
       }
     }
   },

@@ -20,7 +20,7 @@ hardhat: {
     }
 
 ```
-Hardhat will autogenerate random
+Hardhat will autogenerate random accounts for you if no account is given
 
 3. Run a local blockchain to deploy contracts: `npx hardhat node`
 
@@ -28,7 +28,7 @@ Hardhat will autogenerate random
 
 or
 
-To deploy on different network
+4. Deploy on different network
 `npx hardhat run scripts/deploy_root.js --network rinkeby`
 
 5. Interact with deployed contract
