@@ -37,7 +37,7 @@ or
 `npx hardhat console --network rinkeby`
 
 ### Useful commands to interact with contract in console
-List all accounts used in the network - `await ethers.provider.listAccounts()`
-`contract = await ethers.getContractFactory(<Name of the contract>)`
-`contractInstance = await contract.attach(<Contract Address>)`
-`await contractInstance.method()`
+* List all accounts used in the network : `await ethers.provider.listAccounts()`
+* `contract = await ethers.getContractFactory(<Name of the contract>)`
+* `contractInstance = await contract.attach(<Contract Address>)`
+* `await contractInstance.method()`
