@@ -3,38 +3,65 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "./RootOwnable.sol";
 
 contract RootNFT is ERC1155Upgradeable, PausableUpgradeable, RootOwnable{
-    mapping(string => uint256) public CATALOGUE;
-    mapping(uint256 => string) public CATALOGUEbyId;
+
+    using Counters for Counters.Counter;
+    Counters.Counter private _categoryCount;
+
     string public name;
     string public symbol;
+
+    struct Category {
+        string name;
+        uint256 id;
+        uint256 price;
+    }
+
+    Category[] public categories;
+
+    mapping(string=>uint256) public categoryId;
 
     function initialize(string memory _baseURI, string memory _name, string memory _symbol, address _receiver) public initializer{
         __ERC1155_init(_baseURI);
         __Ownable_init(_receiver);
-        CATALOGUE["COLLECTIBLE"] = 1;
-        CATALOGUE["MEMBERSHIP"] = 2;
-        CATALOGUE["PATRON"] = 3;
-        CATALOGUEbyId[1] = "COLLECTIBLE";
-        CATALOGUEbyId[2] = "MEMBERSHIP";
-        CATALOGUEbyId[3] = "PATRON";
+
+        addCategory("collectible", 0.01 ether);
+        addCategory("membership", 0.1 ether);
+        addCategory("patron", 1 ether);
 
         name = _name;
         symbol = _symbol;
-        
-        _mint(_receiver, CATALOGUE["COLLECTIBLE"], 10, "");
-        _mint(_receiver, CATALOGUE["MEMBERSHIP"], 5, "");
-        _mint(_receiver, CATALOGUE["PATRON"], 2, "");
 
     }
 
-    function mint(address _receiver, string memory _category, uint256 _quantity) public onlyOwner{
+    function mint(address _receiver, string memory _category, uint256 _quantity) payable public{
 
-        require(CATALOGUE[_category] > 0, "Wrong Category");
+        require(categoryId[_category] > 0, "Wrong Category");
 
-        _mint(_receiver, CATALOGUE[_category], _quantity,"");
+        require(msg.value >= categories[categoryId[_category] - 1].price, "Price not met!");
+        _mint(_receiver, categoryId[_category], _quantity,"");
+    }
+
+    function setPrice(string memory _category, uint256 _price) public onlyOwner{
+        require(categoryId[_category] > 0, "Wrong Category");
+        require(_price >= 0 , "Wrong Price");
+
+        categories[categoryId[_category]-1].price = _price;
+    }
+
+    function addCategory(string memory _name, uint256 _price) public onlyOwner{
+        require(categoryId[_name]<=0, "Category already exist");
+        _categoryCount.increment();
+        uint256 _categoryId = _categoryCount.current();
+        categoryId[_name] = _categoryId;
+        categories.push(Category({name: _name, id: _categoryId, price: _price}));
+    }
+
+    function totalCategory() public view returns(uint256){
+        return categories.length;
     }
 
     function _beforeTokenTransfer(

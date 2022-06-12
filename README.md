@@ -40,6 +40,6 @@ or
 * List all accounts used in the network : `accounts = await ethers.provider.listAccounts()`
 * Get contract ABI: `contract = await ethers.getContractFactory(<Name of the contract>)`
 * Get contract Instance: `contractInstance = await contract.attach(<Contract Address>)`
-* Call contract methods: `await contractInstance.method()`
-* Get a particular account: `signer = await ethers.getSigner(address)`
+* Call contract methods: `await contractInstance.method(<args>)`
+* Get a particular account: `signer = await ethers.getSigner(<address>)`
 * Call contract as that account: `contractwithsigner = contractInstance.connect(signer)`
