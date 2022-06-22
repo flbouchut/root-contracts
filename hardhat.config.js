@@ -3,6 +3,7 @@
  */
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
+require('@openzeppelin/hardhat-upgrades');
 require('dotenv').config();
 
 module.exports = {
@@ -15,7 +16,8 @@ module.exports = {
         path: "m/44'/60'/0'/0",
         initialIndex: 0,
         count: 5,
-      }
+      },
+      chainId: 1337
     },
     rinkeby :{
       url : process.env.ALCHEMY_RINKEBY_URI,

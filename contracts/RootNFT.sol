@@ -3,13 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "./RootOwnable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract RootNFT is ERC1155Upgradeable, PausableUpgradeable, RootOwnable{
-
-    using Counters for Counters.Counter;
-    Counters.Counter private _categoryCount;
+contract RootNFT is ERC1155Upgradeable, PausableUpgradeable, OwnableUpgradeable{
 
     string public name;
     string public symbol;
@@ -24,9 +20,15 @@ contract RootNFT is ERC1155Upgradeable, PausableUpgradeable, RootOwnable{
 
     mapping(string=>uint256) public categoryId;
 
-    function initialize(string memory _baseURI, string memory _name, string memory _symbol, address _receiver) public initializer{
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        // __Ownable_init();
+        _disableInitializers();
+    }
+
+    function initialize(string memory _baseURI, string memory _name, string memory _symbol) public initializer{
         __ERC1155_init(_baseURI);
-        __Ownable_init(_receiver);
+        __Ownable_init();
 
         addCategory("collectible", 0.01 ether);
         addCategory("membership", 0.1 ether);
@@ -54,8 +56,7 @@ contract RootNFT is ERC1155Upgradeable, PausableUpgradeable, RootOwnable{
 
     function addCategory(string memory _name, uint256 _price) public onlyOwner{
         require(categoryId[_name]<=0, "Category already exist");
-        _categoryCount.increment();
-        uint256 _categoryId = _categoryCount.current();
+        uint256 _categoryId = categories.length + 1;
         categoryId[_name] = _categoryId;
         categories.push(Category({name: _name, id: _categoryId, price: _price}));
     }
