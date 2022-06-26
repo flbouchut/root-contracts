@@ -4,6 +4,7 @@
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 require('@openzeppelin/hardhat-upgrades');
+require('hardhat-ethernal');
 require('dotenv').config();
 
 module.exports = {

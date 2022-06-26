@@ -1,9 +1,13 @@
-const { upgrades } = require("hardhat");
+const { hre, upgrades } = require("hardhat");
 
-async function main(){
+const main = async ()=>{
     const Root = await hre.ethers.getContractFactory("RootNFT")
-    const creatorContract = await upgrades.deployProxy(Root,["sample.uri", "Adeeb2", "ADI2"])
+    const creatorContract = await upgrades.deployProxy(Root,{args: ["sample.uri", "Adeeb", "ADI"]})
     await creatorContract.deployed()
+    await hre.ethernal.push({
+        name: 'Root',
+        address: creatorContract.address
+    })
     console.log("Creator contract instance has beend deployed at "+creatorContract.address)
 }
 
@@ -13,3 +17,4 @@ main()
     console.error(error);
     process.exit(1);
   });
+// module.exports = { deployProxy }
