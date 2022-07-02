@@ -1,0 +1,5 @@
+cid=bafybeia3yhgn7ivjsx6otaq6fe6ochtsk6zbhmo2btiqqqbipkpt4vwjce
+ipfs=ipfs://bafybeia3yhgn7ivjsx6otaq6fe6ochtsk6zbhmo2btiqqqbipkpt4vwjce
+gateway=https://nftstorage.link/ipfs/bafybeia3yhgn7ivjsx6otaq6fe6ochtsk6zbhmo2btiqqqbipkpt4vwjce
+
+base_uri = ipfs://bafybeia3yhgn7ivjsx6otaq6fe6ochtsk6zbhmo2btiqqqbipkpt4vwjce/{id}.json

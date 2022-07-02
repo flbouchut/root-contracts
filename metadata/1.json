@@ -1,0 +1,21 @@
+{
+    "name": "COLLECTIBLE",
+    "description": "Welcome to ROOT Creator Community, by holding one of the NFTs of any creator you get exclusive access to the benefits offered by the creator to his loyal fans",
+    "image" : "https://ipfs.io/ipfs/bafybeifkxwkutvnwzrxd7com6n3grr62xbz2i2brtibcjpoojuozbtekxq/1.jpg",
+    "attributes": [
+        {
+            "trait_types": "ACCESS",
+            "value" : "Community Updates and Posts"
+        },
+        {
+            "trait_types": "ACCESS",
+            "value": "DISCORD FAN CHANNEL"
+        },
+        {
+            "trait_types": "ACCESS",
+            "value": "Merchandise Sale"
+        }
+
+    ],
+    "background_color": "#4287f5"
+}

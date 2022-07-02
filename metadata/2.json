@@ -1,0 +1,45 @@
+{
+    "name": "MEMBERSHIP",
+    "description": "Welcome to ROOT Creator Community, by holding one of the NFTs of any creator you get exclusive access to the benefits offered by the creator to his loyal fans",
+    "image" : "https://ipfs.io/ipfs/bafybeifkxwkutvnwzrxd7com6n3grr62xbz2i2brtibcjpoojuozbtekxq/2.jpg",
+    "attributes": [
+        {
+            "trait_types": "ACCESS",
+            "value" : "Community Updates and Posts"
+        },
+        {
+            "trait_types": "ACCESS",
+            "value": "DISCORD SERVER"
+        },
+        {
+            "trait_types": "ACCESS",
+            "value": "Merchandise Sale"
+        },
+        {
+            "trait_types": "ROOT",
+            "value": "Community Member"
+        },
+        {
+            "trait_types": "ROOT",
+            "value": "Direct Messaging"
+        },
+        {
+            "trait_types": "ACCESS",
+            "value": "Upcoming Work"
+        },
+        {
+            "trait_types": "SPECIAL",
+            "value": "Discount on Merchandise"
+        },
+        {
+            "trait_types": "SPECIAL",
+            "value": "Discord Private Channel"
+        },
+        {
+            "trait_types": "CUSTOM",
+            "value": "Group ZOOM Call"
+        }
+
+    ],
+    "background_color": "#b042f5"
+}

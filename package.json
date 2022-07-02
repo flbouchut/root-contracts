@@ -1,17 +1,29 @@
 {
-  "name": "aesy-contract",
+  "name": "aesy-contracts",
   "version": "1.0.0",
-  "description": "We have all contracts here, we compile here",
-  "main": "truffle-config.js",
-  "directories": {
-    "test": "test"
-  },
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "web3": "node src/index.js"
   },
-  "author": "vizsatiz",
+  "keywords": [],
+  "author": "Adeeb Abdul Salam",
   "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.6",
+    "@nomiclabs/hardhat-etherscan": "^3.0.4",
+    "@openzeppelin/hardhat-upgrades": "^1.19.0",
+    "ethers": "^5.0.0",
+    "hardhat": "^2.9.7"
+  },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.4.1"
+    "@openzeppelin/contracts": "^4.6.0",
+    "@openzeppelin/contracts-upgradeable": "^4.6.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-healthcheck": "^0.1.0",
+    "hardhat-ethernal": "^1.0.0",
+    "web3": "^1.7.4"
   }
 }
