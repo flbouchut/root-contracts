@@ -8,7 +8,7 @@ require('hardhat-ethernal');
 require('dotenv').config();
 
 module.exports = {
-  solidity: "0.8.2",
+  solidity: "0.8.9",
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
