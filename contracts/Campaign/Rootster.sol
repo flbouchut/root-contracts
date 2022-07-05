@@ -3,27 +3,30 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/metatx/MinimalForwarder.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Pausable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Rootster is ERC1155Pausable, ERC2771Context, Ownable {
+contract Rootster is ERC1155Supply, Pausable, ERC2771Context, Ownable {
     using Strings for uint256;
     string private _baseURI = "";
     mapping(uint256 => string) private _tokenURIs;
 
     mapping(address => bool) public isUDclaimed;
+    uint256 public maxSupply;
 
     string public name = "ROOT Community Collection";
     string public symbol = "ROOTSTER";
 
     constructor(MinimalForwarder _trustedForwarder) ERC1155("") ERC2771Context(address(_trustedForwarder)){
+        maxSupply = 100;
     }
 
    function udmint() public whenNotPaused{
         require(isTrustedForwarder(msg.sender), "caller is not trusted");
         require(!isUDclaimed[_msgSender()], "User already claimed");
-
+        require(totalSupply(0) < maxSupply, "Supply limit reached");
         isUDclaimed[_msgSender()] = true;
 
         _mint(_msgSender(), 0, 1, "");
@@ -55,12 +58,29 @@ contract Rootster is ERC1155Pausable, ERC2771Context, Ownable {
         _setURI(_tokenId, _tokenURI);
     }
 
+    function setSupply(uint256 _maxSupply) public onlyOwner{
+        maxSupply = _maxSupply;
+    }
+
     function pause() public onlyOwner{
         _pause();
     }
 
     function unpause() public onlyOwner{
         _unpause();
+    }
+
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal virtual override {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+
+        require(!paused(), "ERC1155Pausable: token transfer while paused");
     }
     // Future mints
 
