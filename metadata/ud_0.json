@@ -1,0 +1,54 @@
+{
+    "name": "ROOT Early Access Token",
+    "description": "Welcome to ROOT Community - by holding one of the NFTs in this collection you get exclusive access to the benefits offered by ROOT",
+    "image" : "ipfs://bafybeieaxscqc6bs2ckrk576mngnp5distx5vjojwwxdbfgfjompgjgcdi/campaignud.mp4",
+    "animation_url": "ipfs://bafybeieaxscqc6bs2ckrk576mngnp5distx5vjojwwxdbfgfjompgjgcdi/campaignud.mp4",
+    "attributes": [
+        {
+            "trait_type": "ACCESS",
+            "value" : "Early Access Program",
+            "id": "EARLY_ACCESS"
+        },
+        {
+            "trait_type": "EDITION",
+            "value" : "Launch Edition",
+            "id": "LAUNCH_EDITION"
+        },
+        {
+            "trait_type": "MEMBERSHIP",
+            "value": "Community Member",
+            "id": "COMMUNITY_MEMBER"
+        },
+        {
+            "trait_type": "EVENTS",
+            "value": "Offline & Virtual Meetups",
+            "id": "MEETUPS"
+        },
+        {
+            "trait_type": "VOTE",
+            "value": "Product Roadmap",
+            "id": "FEATURES"
+        },
+        {
+            "trait_type": "UTILITY",
+            "value": "Premium Features",
+            "id": "PREMIUM_ACCESS"
+        },
+        {
+            "trait_type": "UTILITY",
+            "value": "Airdrops",
+            "id": "AIRDROPS"
+        },
+        {
+            "trait_type": "UTILITY",
+            "value": "Discord Private Access",
+            "id": "DISCORD_PRIVATE_ACCESS"
+        },
+        {
+            "trait_type": "UTILITY",
+            "value": "Exclusive Root Merchandises",
+            "id": "MERCHANDISES"
+        }
+
+    ]
+}
