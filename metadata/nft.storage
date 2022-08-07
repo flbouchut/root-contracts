@@ -3,3 +3,7 @@ ipfs=ipfs://bafybeia3yhgn7ivjsx6otaq6fe6ochtsk6zbhmo2btiqqqbipkpt4vwjce
 gateway=https://nftstorage.link/ipfs/bafybeia3yhgn7ivjsx6otaq6fe6ochtsk6zbhmo2btiqqqbipkpt4vwjce
 
 base_uri = ipfs://bafybeia3yhgn7ivjsx6otaq6fe6ochtsk6zbhmo2btiqqqbipkpt4vwjce/{id}.json
+
+ud_0 = ipfs://bafybeifwc2ujwyxwqmutcm3nii4hgdbajjr6n24tc3ox64f6zsjdfm7lhu
+
+https://ipfs.io/ipfs/bafybeifwc2ujwyxwqmutcm3nii4hgdbajjr6n24tc3ox64f6zsjdfm7lhu/ud_0.json
