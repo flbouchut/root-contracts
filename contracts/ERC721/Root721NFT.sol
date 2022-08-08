@@ -15,28 +15,40 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
     mapping(uint256 => uint256[]) private idsbyClass;
 
     address private handler;
+    bool private isInit;
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    function initialize(string memory _name, address _handler) public onlyInitializing {
+    function initialize(address _handler, string memory _name) public initializer {
         __ERC721_init(_name, "ROOT");
         __Ownable_init();
-        // __ERC2771Context_init(address(_trustedForwarder));
         setHandler(_handler);
+        isInit = true;
     }
 
-    constructor(MinimalForwarderUpgradeable _trustedForwarder) ERC2771ContextUpgradeable(address(_trustedForwarder)){ }
+    constructor(MinimalForwarderUpgradeable _trustedForwarder) ERC2771ContextUpgradeable(address(_trustedForwarder)){ 
+    }
 
-    // Forwarder override
+// Forwarder override 
     function _msgSender() internal view override(ContextUpgradeable, ERC2771ContextUpgradeable)
       returns (address sender) {
-      sender = ERC2771ContextUpgradeable._msgSender();
+      if(!isInit){
+            assembly {
+                sender := shr(96, calldataload(sub(calldatasize(), 20)))
+            }
+      }else{
+          sender = ERC2771ContextUpgradeable._msgSender(); 
+      }
     }
 
     function _msgData() internal view override(ContextUpgradeable, ERC2771ContextUpgradeable)
       returns (bytes calldata) {
-      return ERC2771ContextUpgradeable._msgData();
+        if(!isInit){
+            return msg.data[:msg.data.length - 20];
+        }else{
+            return ERC2771ContextUpgradeable._msgData();
+        }
     }
 
     function createToken(uint256 _classId) public{
@@ -55,14 +67,14 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
     }
 
 // Owner or Handler write functions
-    function settokenURI(uint256 _tokenId, string memory _tokenURI) external {
+    function settokenURI(uint256 _tokenId, string memory _tokenURI) public {
          require(_exists(_tokenId), "ERC721URIStorage: URI set of nonexistent token");
          require( (_msgSender() == owner()) || (_msgSender() == handler), "Caller is not authorized");
         _tokenURIs[_tokenId] = _tokenURI;
     }
 
 // Only owner write functions
-    function setclassURI(uint256 _classId, string memory _tokenURI) external onlyOwner{
+    function setclassURI(uint256 _classId, string memory _tokenURI) public onlyOwner{
         if(!minteable[_classId])
             minteable[_classId] = true;
         classURIs[_classId] = _tokenURI;
@@ -72,7 +84,7 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
         handler = _handler;
     }
 
-    function toggleMinteable(uint256 _classId) external onlyOwner{
+    function toggleMinteable(uint256 _classId) public onlyOwner{
         minteable[_classId] = !minteable[_classId];
     }
 

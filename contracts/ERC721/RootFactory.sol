@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol";
 import "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./Root721NFT.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract RootFactory is ERC2771Context, Ownable {
+contract RootFactory is ERC2771Context, Ownable, Pausable {
     UpgradeableBeacon private immutable RootBeacon;
     address private RootAdmin;
-    address[] private projects;
+    event NewProject(address indexed creator, address project, string name);
 
     constructor(address _implementation, address _admin,address _trustedForwarder) ERC2771Context(_trustedForwarder){
         RootBeacon = new UpgradeableBeacon(_implementation);
@@ -28,13 +28,21 @@ contract RootFactory is ERC2771Context, Ownable {
       return ERC2771Context._msgData();
     }
 
-    function createProxy(string memory name) public returns(address){
+    function createProxy(string memory name) public whenNotPaused returns(address){
         BeaconProxy proxy = new BeaconProxy(address(RootBeacon), 
-            abi.encodeWithSelector(RootNFT(address(0)).initialize.selector, name, RootAdmin)
+            abi.encodePacked(abi.encodeWithSignature("initialize(address,string)",  RootAdmin, name), _msgSender())
         );
 
-        projects.push(address(proxy));
+        emit NewProject(_msgSender(), address(proxy), name);
         return address(proxy);
+    }
+
+    function togglePause() public onlyOwner{
+        if(paused()){
+            _unpause();
+        }else{
+            _pause();
+        }
     }
 
     function updateAdmin(address newAdmin) external onlyOwner{
@@ -47,10 +55,6 @@ contract RootFactory is ERC2771Context, Ownable {
 
     function getBeacon() public view returns(address){
         return address(RootBeacon);
-    }
-
-    function getAllProjects() public view returns(address[] memory){
-        return projects;
     }
 
 }
