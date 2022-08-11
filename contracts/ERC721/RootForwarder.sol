@@ -11,6 +11,8 @@ contract RootForwarder is EIP712, Ownable {
     using ECDSA for bytes32;
     address public relayer;
 
+    event MetaTransaction(address indexed user, address indexed destination, uint256 nonce, bytes funcSig);
+
     struct ForwardRequest {
         address from;
         address to;
@@ -69,6 +71,10 @@ contract RootForwarder is EIP712, Ownable {
             assembly {
                 invalid()
             }
+        }
+
+        if(success){
+            emit MetaTransaction(req.from, req.to, req.nonce, req.data);
         }
 
         return (success, returndata);
