@@ -20,9 +20,10 @@ module.exports = {
       },
       chainId: 1337
     },
-    ethereum :{
+    localhost :{
+      account: process.env.ADMIN_ACCOUNT,
       url : process.env.ALCHEMY_RINKEBY_URI,
-      accounts:{
+      accounts: {
         mnemonic: process.env.MNEMONIC_DEV
       }
     }

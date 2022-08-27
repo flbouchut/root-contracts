@@ -50,7 +50,7 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
         }
     }
 
-    function createToken(uint256 _classId) public{
+    function createToken(uint256 _classId) public {
         require(minteable[_classId], "Class not minteable");
         _tokenIds.increment();
         uint256 id = _tokenIds.current();
