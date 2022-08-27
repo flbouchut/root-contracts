@@ -1,4 +1,4 @@
-const { ethers, upgrades } = require("hardhat");
+const { ethers, upgrades, hre } = require("hardhat");
 
 const deployCampaignForwarder = async() => {
     const deployer = await ethers.getContractFactory("contracts/Campaign/RootForwarder.sol:RootForwarder")

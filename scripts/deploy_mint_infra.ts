@@ -1,3 +1,5 @@
+
+
 const deployMintInfraForwarder = async() => {
     const deployer = await ethers.getContractFactory("contracts/ERC721/RootForwarder.sol:RootForwarder")
     const admin = await deployer.deploy()
@@ -11,7 +13,7 @@ const deployMintInfraRoot721NFT = async(forwarderAddr: string) => {
     const admin = await deployer.deploy(forwarderAddr)
     await admin.deployed()
     console.log(`Root721NFT for campaign contract deployed at ${admin.address}`)
-    // TODO call initialise
+    await admin.initialize(hre.network.config.account, "TestName")
     return  { addr: admin.address, for: forwarderAddr }
 }
 
@@ -26,7 +28,7 @@ const deployMintInfraRootFactory = async(impl: string, adminAddr: string, forwar
 deployMintInfraForwarder()
     .then(deployMintInfraRoot721NFT)
     .then(data => {
-        deployMintInfraRootFactory(data.addr, "0x130757bF58EE8B4c52862c3f7b09fE87Bc836DF3", data.for)
+        deployMintInfraRootFactory(data.addr, hre.network.config.account, data.for)
     })
     .catch((error) => {
         console.error(error);
