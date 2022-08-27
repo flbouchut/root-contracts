@@ -27,10 +27,9 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
         isInit = true;
     }
 
-    constructor(MinimalForwarderUpgradeable _trustedForwarder) ERC2771ContextUpgradeable(address(_trustedForwarder)){ 
-    }
+    constructor(MinimalForwarderUpgradeable _trustedForwarder) ERC2771ContextUpgradeable(address(_trustedForwarder)) {}
 
-// Forwarder override 
+    // Forwarder override 
     function _msgSender() internal view override(ContextUpgradeable, ERC2771ContextUpgradeable)
       returns (address sender) {
       if(!isInit){
@@ -66,14 +65,14 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
         _tokenURIs[_tokenId] = _tokenURI;
     }
 
-// Owner or Handler write functions
+    // Owner or Handler write functions
     function settokenURI(uint256 _tokenId, string memory _tokenURI) public {
          require(_exists(_tokenId), "ERC721URIStorage: URI set of nonexistent token");
          require( (_msgSender() == owner()) || (_msgSender() == handler), "Caller is not authorized");
         _tokenURIs[_tokenId] = _tokenURI;
     }
 
-// Only owner write functions
+    // Only owner write functions
     function setclassURI(uint256 _classId, string memory _tokenURI) public onlyOwner{
         if(!minteable[_classId])
             minteable[_classId] = true;
@@ -88,7 +87,7 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
         minteable[_classId] = !minteable[_classId];
     }
 
-// Public view functions
+    // Public view functions
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
         string memory _tokenURI = _tokenURIs[tokenId];

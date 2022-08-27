@@ -1,4 +1,4 @@
-const main = async()=>{
+const deployRoot = async() => {
   const deployer = await hre.ethers.getContractFactory("RootNFT")
   const root = await deployer.deploy()
   await root.deployed()
@@ -6,12 +6,12 @@ const main = async()=>{
       name: 'RootNFT',
       address: root.address
   })
-  console.log("Root NFT contract deployed at "+root.address)
+  console.log(`Root NFT contract deployed at ${root.address}`)
 }
 
-main()
-.then(() => process.exit(0))
-.catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+deployRoot()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

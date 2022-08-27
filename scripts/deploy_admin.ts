@@ -1,4 +1,4 @@
-const main = async()=>{
+const deployAdmin = async() => {
     const deployer = await hre.ethers.getContractFactory("ProxyAdmin")
     const admin = await deployer.deploy()
     await admin.deployed()
@@ -6,10 +6,10 @@ const main = async()=>{
         name: 'ProxyAdmin',
         address: admin.address
     })
-    console.log("Creator Admin contract deployed at "+admin.address)
+    console.log(`Creator Admin contract deployed at ${admin.address}`)
 }
 
-main()
+deployAdmin()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
