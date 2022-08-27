@@ -28,7 +28,7 @@ contract RootFactory is ERC2771Context, Ownable, Pausable {
       return ERC2771Context._msgData();
     }
 
-    function createProxy(string memory name) public whenNotPaused returns(address){
+    function createProxy(string memory name) public whenNotPaused returns (address) {
         BeaconProxy proxy = new BeaconProxy(
             address(RootBeacon),
             abi.encodePacked(abi.encodeWithSignature("initialize(address,string)",  RootAdmin, name), _msgSender())
@@ -46,15 +46,15 @@ contract RootFactory is ERC2771Context, Ownable, Pausable {
         }
     }
 
-    function updateAdmin(address newAdmin) external onlyOwner{
+    function updateAdmin(address newAdmin) external onlyOwner {
         RootAdmin = newAdmin;
     }
 
-    function getAdmin() public view returns(address){
+    function getAdmin() public view returns(address) {
         return RootAdmin;
     }
 
-    function getBeacon() public view returns(address){
+    function getBeacon() public view returns(address) {
         return address(RootBeacon);
     }
 }

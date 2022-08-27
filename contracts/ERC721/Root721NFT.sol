@@ -60,7 +60,7 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
         settokenURIbyminter(id, classURIs[_classId]);
     }
 
-    function settokenURIbyminter(uint256 _tokenId, string memory _tokenURI) internal{
+    function settokenURIbyminter(uint256 _tokenId, string memory _tokenURI) internal {
         require(_exists(_tokenId), "ERC721URIStorage: URI set of nonexistent token");
         _tokenURIs[_tokenId] = _tokenURI;
     }
@@ -73,7 +73,7 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
     }
 
     // Only owner write functions
-    function setclassURI(uint256 _classId, string memory _tokenURI) public onlyOwner{
+    function setclassURI(uint256 _classId, string memory _tokenURI) public onlyOwner {
         if(!minteable[_classId])
             minteable[_classId] = true;
         classURIs[_classId] = _tokenURI;
@@ -94,15 +94,15 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
         return _tokenURI;
     }
 
-    function getclassURI(uint256 _classId) public view returns(string memory){
+    function getclassURI(uint256 _classId) public view returns(string memory) {
         return classURIs[_classId];
     }
 
-    function isMinteable(uint256 _classId) public view returns (bool){
+    function isMinteable(uint256 _classId) public view returns (bool) {
         return minteable[_classId];
     }
 
-    function allIds(uint256 _classId) public view returns(uint256[] memory){
+    function allIds(uint256 _classId) public view returns(uint256[] memory) {
         uint256[] memory ids = idsbyClass[_classId];
         return ids;
     }
