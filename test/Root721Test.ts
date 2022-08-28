@@ -17,16 +17,19 @@ describe("Token contract", function () {
     const tx = await rootFactory.createProxy("test1")
     let receipt = await tx.wait();
     const newProjectEvent = receipt.events?.filter((x: any) => { return x.event == "NewProject" });
-    const proxyAddr = newProjectEvent[0]["args"]["creator"]
+    const proxyAddr = newProjectEvent[0]["args"]["project"]
     
     const ReloadedProxyContract = await ethers.getContractFactory("contracts/ERC721/Root721NFT.sol:RootNFT");
     const rootProxy = await ReloadedProxyContract.attach(proxyAddr);
 
-    const receiptToggle = await rootProxy.toggleMinteable(1)
-    const createTokenReceipt = await rootProxy.createToken(1)
+    const receiptToggle = await rootProxy.toggleMinteable("1")
+    const setTokenUriReceipt = await rootProxy.set
+    const createTokenReceipt = await rootProxy.createToken("1")
+
 
     expect(createTokenReceipt.hash != null)
-    expect(receiptToggle.hash != null)
+    // expect(receiptToggle.hash != null)
+
   });
-  
+
 });

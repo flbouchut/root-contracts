@@ -7,7 +7,13 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgradeable{
+struct TokenClass {
+    uint256 classId;
+    uint256[] tokenIds;
+    string tokenUri;
+}
+
+contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgradeable {
     mapping(uint256 => bool) private minteable;
     mapping(uint256 => string) private _tokenURIs;
     mapping(uint256 => string) private classURIs;
@@ -52,6 +58,7 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
 
     function createToken(uint256 _classId) public {
         require(minteable[_classId], "Class not minteable");
+        require(bytes(classURIs[_classId]).length > 0, "The tokenUri for the class should be set");
         _tokenIds.increment();
         uint256 id = _tokenIds.current();
         classbyId[id] = _classId;
