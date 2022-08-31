@@ -8,7 +8,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 struct TokenClass {
-    uint256 classId;
     string tokenUri;
     uint256 maxSupply;
     bool isInited;
@@ -17,6 +16,7 @@ struct TokenClass {
 contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgradeable {
     mapping(uint256 => bool) private minteable;
     mapping(uint256 => uint256) private classIdByTokenId;
+    mapping(uint256 => string) private tokenUriByTokenId;
     mapping(uint256 => uint256[]) private tokenIdsByClassId;
     mapping(uint256 => TokenClass) private classbyClassId;
 
@@ -57,32 +57,34 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
     }
 
     function createToken(uint256 _classId) public {
+        TokenClass memory _tokenClass = classbyClassId[_classId];
         require(minteable[_classId], "Class not minteable");
-        require(classbyClassId[_classId].maxSupply > tokenIdsByClassId[_classId].length, "Max supply reached");
+        require(_tokenClass.maxSupply > tokenIdsByClassId[_classId].length, "Max supply reached");
         _tokenIds.increment();
         uint256 id = _tokenIds.current();
         tokenIdsByClassId[_classId].push(id);
         classIdByTokenId[id] = _classId;
         _safeMint(_msgSender(), id, "");
-        settokenURIbyminter(id, classbyClassId[_classId].tokenUri);
+        settokenURIbyminter(id, _tokenClass.tokenUri);
     }
 
     function settokenURIbyminter(uint256 _tokenId, string memory _tokenURI) internal {
         require(_exists(_tokenId), "ERC721URIStorage: URI set of nonexistent token");
-        classbyClassId[classIdByTokenId[_tokenId]].tokenUri = _tokenURI;
+        tokenUriByTokenId[_tokenId] = _tokenURI;
     }
 
     // Owner or Handler write functions
     function settokenURI(uint256 _tokenId, string memory _tokenURI) public {
         require(_exists(_tokenId), "ERC721URIStorage: URI set of nonexistent token");
         require( (_msgSender() == owner()) || (_msgSender() == handler), "Caller is not authorized");
-        classbyClassId[classIdByTokenId[_tokenId]].tokenUri = _tokenURI;
+        tokenUriByTokenId[_tokenId] = _tokenURI;
     }
 
     // Only owner write functions
     function setclassURI(uint256 _classId, string memory _tokenURI) public onlyOwner {
-        if(!minteable[_classId])
-            minteable[_classId] = true;
+        if(!minteable[_classId]) {
+            toggleMinteable(_classId);
+        }
         classbyClassId[_classId].tokenUri = _tokenURI;
     }
 
@@ -97,7 +99,7 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
 
     function toggleMinteable(uint256 _classId) public onlyOwner {
         if (classbyClassId[_classId].isInited != true) {
-            classbyClassId[_classId] = TokenClass(_classId, "", 1000, true);
+            classbyClassId[_classId] = TokenClass("", 1000, true);
         }
         minteable[_classId] = !minteable[_classId];
     }
@@ -105,8 +107,7 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
     // Public view functions
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
-        string memory _tokenURI = classbyClassId[classIdByTokenId[tokenId]].tokenUri;
-        return _tokenURI;
+        return tokenUriByTokenId[tokenId];
     }
 
     function getclassURI(uint256 _classId) public view returns (string memory) {

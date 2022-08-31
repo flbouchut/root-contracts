@@ -139,7 +139,7 @@ describe("Root 721 NFT Success Scenario",  () => {
     const classUri = await rootProxy.getclassURI(1)
 
     expect(tokenUri).to.equal("{}")
-    expect(classUri).to.equal("{}")
+    expect(classUri).to.equal("")
   })
 
 });
