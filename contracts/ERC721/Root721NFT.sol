@@ -7,15 +7,21 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgradeable{
-    mapping(uint256 => bool) private minteable;
-    mapping(uint256 => string) private _tokenURIs;
-    mapping(uint256 => string) private classURIs;
-    mapping(uint256 => uint256) private classbyId;
-    mapping(uint256 => uint256[]) private idsbyClass;
+struct TokenClass {
+    string tokenUri;
+    uint256 maxSupply;
+    bool isInited;
+}
 
-    address private handler;
+contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgradeable {
+    mapping(uint256 => bool) private minteable;
+    mapping(uint256 => uint256) private classIdByTokenId;
+    mapping(uint256 => string) private tokenUriByTokenId;
+    mapping(uint256 => uint256[]) private tokenIdsByClassId;
+    mapping(uint256 => TokenClass) private classbyClassId;
+
     bool private isInit;
+    address private handler;
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -27,84 +33,96 @@ contract RootNFT is ERC721Upgradeable, ERC2771ContextUpgradeable, OwnableUpgrade
         isInit = true;
     }
 
-    constructor(MinimalForwarderUpgradeable _trustedForwarder) ERC2771ContextUpgradeable(address(_trustedForwarder)){ 
-    }
+    constructor(MinimalForwarderUpgradeable _trustedForwarder) ERC2771ContextUpgradeable(address(_trustedForwarder)) {}
 
-// Forwarder override 
+    // Forwarder override 
     function _msgSender() internal view override(ContextUpgradeable, ERC2771ContextUpgradeable)
       returns (address sender) {
-      if(!isInit){
+      if(!isInit) {
             assembly {
                 sender := shr(96, calldataload(sub(calldatasize(), 20)))
             }
-      }else{
+      } else {
           sender = ERC2771ContextUpgradeable._msgSender(); 
       }
     }
 
     function _msgData() internal view override(ContextUpgradeable, ERC2771ContextUpgradeable)
       returns (bytes calldata) {
-        if(!isInit){
+        if (!isInit) {
             return msg.data[:msg.data.length - 20];
-        }else{
+        } else {
             return ERC2771ContextUpgradeable._msgData();
         }
     }
 
-    function createToken(uint256 _classId) public{
+    function createToken(uint256 _classId) public {
+        TokenClass memory _tokenClass = classbyClassId[_classId];
         require(minteable[_classId], "Class not minteable");
+        require(_tokenClass.maxSupply > tokenIdsByClassId[_classId].length, "Max supply reached");
         _tokenIds.increment();
         uint256 id = _tokenIds.current();
-        classbyId[id] = _classId;
-        idsbyClass[_classId].push(id);
+        tokenIdsByClassId[_classId].push(id);
+        classIdByTokenId[id] = _classId;
         _safeMint(_msgSender(), id, "");
-        settokenURIbyminter(id, classURIs[_classId]);
+        settokenURIbyminter(id, _tokenClass.tokenUri);
     }
 
-    function settokenURIbyminter(uint256 _tokenId, string memory _tokenURI) internal{
+    function settokenURIbyminter(uint256 _tokenId, string memory _tokenURI) internal {
         require(_exists(_tokenId), "ERC721URIStorage: URI set of nonexistent token");
-        _tokenURIs[_tokenId] = _tokenURI;
+        tokenUriByTokenId[_tokenId] = _tokenURI;
     }
 
-// Owner or Handler write functions
+    // Owner or Handler write functions
     function settokenURI(uint256 _tokenId, string memory _tokenURI) public {
-         require(_exists(_tokenId), "ERC721URIStorage: URI set of nonexistent token");
-         require( (_msgSender() == owner()) || (_msgSender() == handler), "Caller is not authorized");
-        _tokenURIs[_tokenId] = _tokenURI;
+        require(_exists(_tokenId), "ERC721URIStorage: URI set of nonexistent token");
+        require( (_msgSender() == owner()) || (_msgSender() == handler), "Caller is not authorized");
+        tokenUriByTokenId[_tokenId] = _tokenURI;
     }
 
-// Only owner write functions
-    function setclassURI(uint256 _classId, string memory _tokenURI) public onlyOwner{
-        if(!minteable[_classId])
-            minteable[_classId] = true;
-        classURIs[_classId] = _tokenURI;
+    // Only owner write functions
+    function setclassURI(uint256 _classId, string memory _tokenURI) public onlyOwner {
+        if(!minteable[_classId]) {
+            toggleMinteable(_classId);
+        }
+        classbyClassId[_classId].tokenUri = _tokenURI;
     }
 
-    function setHandler(address _handler) public onlyOwner{
+
+    function setMaxSupply(uint256 _classId, uint256 _maxSupply) public onlyOwner {
+        classbyClassId[_classId].maxSupply = _maxSupply;
+    }
+
+    function setHandler(address _handler) public onlyOwner {
         handler = _handler;
     }
 
-    function toggleMinteable(uint256 _classId) public onlyOwner{
+    function toggleMinteable(uint256 _classId) public onlyOwner {
+        if (classbyClassId[_classId].isInited != true) {
+            classbyClassId[_classId] = TokenClass("", 1000, true);
+        }
         minteable[_classId] = !minteable[_classId];
     }
 
-// Public view functions
+    // Public view functions
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
-        string memory _tokenURI = _tokenURIs[tokenId];
-        return _tokenURI;
+        return tokenUriByTokenId[tokenId];
     }
 
-    function getclassURI(uint256 _classId) public view returns(string memory){
-        return classURIs[_classId];
+    function getclassURI(uint256 _classId) public view returns (string memory) {
+        return classbyClassId[_classId].tokenUri;
     }
 
-    function isMinteable(uint256 _classId) public view returns (bool){
+    function getMaxSupply(uint256 _classId) public view returns (uint256) {
+        return classbyClassId[_classId].maxSupply;
+    }
+
+    function isMinteable(uint256 _classId) public view returns (bool) {
         return minteable[_classId];
     }
 
-    function allIds(uint256 _classId) public view returns(uint256[] memory){
-        uint256[] memory ids = idsbyClass[_classId];
-        return ids;
+    function allIds(uint256 _classId) public view returns(uint256[] memory) {
+        return tokenIdsByClassId[_classId];
     }
 }

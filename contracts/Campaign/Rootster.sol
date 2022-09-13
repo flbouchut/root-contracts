@@ -19,7 +19,7 @@ contract Rootster is ERC1155Supply, Pausable, ERC2771Context, Ownable {
     string public name = "ROOT Community";
     string public symbol = "ROOTSTER";
 
-    constructor(MinimalForwarder _trustedForwarder) ERC1155("") ERC2771Context(address(_trustedForwarder)){
+    constructor(MinimalForwarder _trustedForwarder) ERC1155("") ERC2771Context(address(_trustedForwarder)) {
         maxSupply = 100;
     }
 
